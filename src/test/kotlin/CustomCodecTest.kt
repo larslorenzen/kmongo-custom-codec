@@ -13,7 +13,7 @@ class CustomCodecTest {
     private val logger = LoggerFactory.getLogger(CustomCodecTest::class.java)
 
     @Test
-    fun testCustomCodec() {
+    fun testCustomCodec() = runBlocking {
         ObjectMappingConfiguration.customCodecProviders.add(CurrencyCodec())
 
         val coroutineClient = KMongo.createClient().coroutine
@@ -22,17 +22,18 @@ class CustomCodecTest {
         val account = Account(currency = Currency.getInstance("USD"))
         val collection = database.getCollection<Account>()
 
-        logger.info { "Saving"}
-        runBlocking {
-            collection.insertOne(account)
-        }
-        logger.info { "Updating"}
-        runBlocking {
-            collection.updateOne(
-                account.copy(
-                    currency = Currency.getInstance("EUR")
-                )
+        logger.info { "Saving" }
+        collection.insertOne(account)
+
+        logger.info { "finding" }
+        assert(collection.findOneById(account.id)?.currency == Currency.getInstance("USD"))
+
+        logger.info { "Updating" }
+        collection.updateOne(
+            account.copy(
+                currency = Currency.getInstance("EUR")
             )
-        }
+        )
+        Unit
     }
 }

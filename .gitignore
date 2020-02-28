@@ -1,0 +1,10 @@
+.DS_Store
+/.gradle
+/.idea
+/.kotlintest
+/out
+/build
+*.iml
+*.ipr
+*.iws
+.gradletasknamecache
